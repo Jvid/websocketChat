@@ -11,10 +11,11 @@
   <script src='../static/js/common.js'></script>
   <title>聊天室</title>
 </head>
-<body>
+<body onbeforeunload="checkLeave()">
   <div class="chat-wd">
     <div class="title">
       <span class="roomName">聊天室</span>
+      <span class="count">(在线人数<i class="num">0</i>人)</span>
       <div class="user-info">
         <span class="userName">
           <span class="adminName">admin</span> 
@@ -27,28 +28,6 @@
     </div>
     <div class="chat-main">
       <ul class="chat-wrap">
-        <!-- <li class="self-content">
-            <p class="name">mine</p>
-            <div class="content-wrap clearFixed">
-              <p class="content">
-                这是我自己发送的内容
-              </p>
-            </div>
-        </li> -->
-        <!-- <li class="sys-content">user1 come in</li> -->
-        <!-- <li class="time-content">
-          <span class="time">
-            11:08
-          </span>  
-        </li> -->
-        <!-- <li class="user-content">
-            <p class="name">user1</p>
-            <div class="content-wrap clearFixed">
-              <p class="content">
-                这是user1发送的内容
-              </p>
-            </div>
-        </li> -->
       </ul>
     </div>
     <div class="input-wrap">

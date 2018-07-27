@@ -3,7 +3,44 @@ $(function(){
     data:{
       type: 'login',
       timer: null,
-      baseUrl: 'http://39.107.71.98:9999'
+      baseUrl: 'http://39.107.71.98:9999',
+      loginCode: {
+        '-1' : '用户不存在！',
+        '0' : '用户已经登录！',
+        '2' : '密码输入错误！'
+      },
+      rules: {
+        name: [
+          {
+            ruleExp: function(val){return !val},
+            message: '请输入用户名'
+          },
+          {
+            ruleExp: function(val){return val.length > 10},
+            message: '请输入小于10位用户名'
+          }
+        ],
+        pwd: [
+          {
+            ruleExp: function(val){return !val},
+            message: '请输入密码'
+          },
+          {
+            ruleExp: function(val){return val.length > 12},
+            message: '输入密码长度不能超过12位'
+          },
+          {
+            ruleExp: function(val){return val.length < 4},
+            message: '输入密码长度不能少于4位'
+          }
+        ],
+        cfmPwd: [
+          {
+            ruleExp: function(val,param){return val !== param.pwd},
+            message: '两次输入密码不一样'
+          }
+        ]
+      }
     },
     init(){
       this.bindEvent();
@@ -63,80 +100,61 @@ $(function(){
     },
     loginFn() {
       var _self = this;
-      var name = $('#name').val().trim();
-      var pwd = $('#pwd').val().trim();
-      if(!name){
-        _self.errorFn('请输入用户名');
-        return
+      var _data = this.data.loginCode;
+      var rules = this.data.rules;
+
+      var param = {
+        name: $('#name').val().trim(),
+        pwd: $('#pwd').val().trim()
       }
-      if(!pwd) {
-        _self.errorFn('请输入密码');
-        return
+      // 规则判断
+      for(k in param) {
+        var rule = rules[k];
+        for(var i=0,len=rule.length;i<len;i++){
+          if (rule[i].ruleExp(param[k])) {
+            _self.errorFn(rule[i].message);
+            return
+          }
+        }
       }
-      if(pwd.length > 12) {
-        _self.errorFn('输入密码长度不能超过12位');
-        return
-      }
-      if (pwd.length < 4) {
-        _self.errorFn('输入密码长度不能少于4位');
-        return
-      }
+
       _self.ajaxFn({
         url: _self.data.baseUrl + '/login',
         type: 'post',
-        data: {name,pwd},
+        data: param,
         successFn: function (res) {
           console.log(res);
-          /*
-            code: 
-              -1 用户不存在
-              1 成功
-              2 密码不正确
-          */
-          if(res.code == -1){
-            _self.errorFn('用户不存在！')
-          } else if(res.code == 2){
-            _self.errorFn('密码不正确！')
-          } else if(res.code == 0){
-            _self.errorFn('用户已经登录！')
-          } else if(res.code == 1){
-            console.log('登录成功！')
-            $$.setCookie('name',name);
-            window.location.href = '/views/chat.html';
-          }
-          
+          res.code == 1 ? _self.doLogin(res.data.name) : _self.errorFn(_data[res.code]);
         }
       })
     },
+    doLogin(name){
+      $$.setCookie('name',name);
+      window.location.href = '/views/chat.html';
+    },
     registerFn() {
       var _self = this;
-      var name = $('#name').val().trim();
-      var pwd = $('#pwd').val().trim();
-      var cfmPwd = $('#cfmPwd').val().trim();
-      if(!name){
-        _self.errorFn('请输入用户名');
-        return
+      var rules = this.data.rules;
+      var param = {
+        name: $('#name').val().trim(),
+        pwd: $('#pwd').val().trim(),
+        cfmPwd: $('#cfmPwd').val().trim()
       }
-      if(!pwd) {
-        _self.errorFn('请输入密码');
-        return
-      }
-      if(pwd.length > 12) {
-        _self.errorFn('输入密码长度不能超过12位');
-        return
-      }
-      if (pwd.length < 4) {
-        _self.errorFn('输入密码长度不能少于4位');
-        return
-      }
-      if(cfmPwd !== pwd) {
-        _self.errorFn('两次输入密码不一样');
-        return
+      // 规则判断
+      for(k in param) {
+        var rule = rules[k];
+        for(var i=0,len=rule.length;i<len;i++){
+          console.log(rule[i].message,rule[i].ruleExp(param[k],param))
+          if (rule[i].ruleExp(param[k],param)) {
+            _self.errorFn(rule[i].message);
+            return
+          }
+        }
       }
       _self.ajaxFn({
         url: _self.data.baseUrl + '/register',
         type: 'post',
-        data: {name,pwd},
+        data: param,
         successFn: function (res) {
           console.log(res);
           /*
@@ -170,12 +188,6 @@ $(function(){
           console.log(err);
         }
       })
-    },
-    judgeLogin(){
-      var name = $$.getCookie('name');
-      if(name){
-        window.location.href = '/views/chat.html';
-      }
     }
   }
   page.init();

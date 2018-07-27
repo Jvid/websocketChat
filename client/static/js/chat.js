@@ -90,10 +90,14 @@ $(function() {
           break;
         case 'sys':
         case 'join':
+        case 'leave':
           _self.renderSys(obj)
           break;
         case 'time':
           _self.renderTime(obj)
+          break;
+        case 'count':
+          _self.renderCount(obj)
           break;
         default :
           _self.renderSys({
@@ -139,6 +143,8 @@ $(function() {
     },
     renderSys(obj){
       var chatWrap = this.data.chatWrap;
+      // obj.type == 'join' && $('.num').text($('.num').text()-0+1);
+      // obj.type == 'leave' && $('.num').text($('.num').text()-0-1);
       chatWrap.append(
         `
          <li class="sys-content">${obj.content}</li>
@@ -161,8 +167,13 @@ $(function() {
       this.scrollToBottom();
 
     },
+    renderCount(obj){
+      $('.num').text(obj.content)
+    },
     scrollToBottom(){
-      this.data.chatWrap[0].scrollIntoView(false)
+      // this.data.chatWrap[0].scrollIntoView()
+      var h = this.data.chatWrap.height() - $('.chat-main').height() + 32;
+      $('.chat-main').scrollTop(h);
     },
     logOut(name){
       var _self = this;
@@ -173,11 +184,12 @@ $(function() {
         dataType: "json",
         success: function(res){
           $$.deletCookie('name');
+          // $$.setCookie('name','');
+          console.log($$.getCookie('name'));
           window.location.href = '/index.html'
         }
       })
     }
   }
-
-  page.init()
+  page.init();
 })

@@ -9,6 +9,11 @@
   <link rel="stylesheet" href="./static/styles/index.css">
   <script src="./lib/jquery.min.js"></script>
   <script src="./static/js/common.js"></script>
+  <script>
+    if($$.getCookie('name')){
+      window.location.href = '/views/chat.html';
+    }
+  </script>
   <title>登录/注册</title>
 </head>
 <body>
@@ -29,7 +34,7 @@
             <span class="label-name">密码</span>
           </label>
           <label class="cfm-pwd">
-            <input type="password" class="label-cnt" placeholder="确认8位密码" id="cfmPwd">
+            <input type="password" class="label-cnt" placeholder="确认4-12位密码" id="cfmPwd">
             <span class="label-name">确认密码</span>
           </label>
           <p class="tips hideText"></p>

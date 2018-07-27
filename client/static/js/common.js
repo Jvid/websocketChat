@@ -14,9 +14,12 @@ var $$ = {
   },
   deletCookie(name){
     var exp = new Date();
-    exp.setTime(exp.getTime() - 1);
-    var cval = $$.getCookie(name);
-    if (cval != null)
-      document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+    exp.setTime(exp.getTime() + 24 * 60 * 60 * 1000);
+    document.cookie = name + "=;expires=" + exp.toGMTString() + ';path=/';
+    // var exp = new Date();
+    // exp.setTime(exp.getTime() - 1);
+    // var cval = $$.getCookie(name);
+    // if (cval != null)
+    //   document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
   }
 }
